@@ -1,0 +1,69 @@
+/*
+ * EMP table : 
+ * 
+ */
+
+SELECT ENAME		--ename : 
+	 , SAL*3		--quarterly : 
+	 , COMM			--commision : Why? WHEN?
+	 FROM EMP;		
+	 
+
+SELECT *
+	FROM emp;
+	
+
+/*
+ * 주석은 항상 달기. 별명 짓기
+ */
+
+SELECT ENAME
+	  ,DEPTNO
+FROM emp a -- TABLE alias a
+;
+
+
+SELECT 100 + 5, 10-3, 30 * 2, 10/3;
+
+SELECT 100 + 5, 10-3, 30 * 2, 10/3
+FROM dual;
+
+SELECT dbms_random.value() * 100 FROM dual;
+
+SELECT ENAME FROM EMP AS employee;
+
+SELECT ENAME AS "employee name" FROM EMP employee;
+
+SELECT "employee name" FROM EMP;
+
+
+SELECT *
+FROM EMP
+ORDER BY SAL;
+
+SELECT *
+FROM EMP
+ORDER BY SAL DESC;
+
+SELECT *
+FROM EMP
+ORDER BY DEPTNO ASC, SAL DESC;
+
+SELECT * FROM NLS_DATABASE_PARAMETERS;
+
+SELECT * FROM NLS_DATABASE_PARAMETERS
+WHERE  PARAMETER = 'NLS_CHARACTERSET';
+
+SELECT * FROM NLS_DATABASE_PARAMETERS;
+WHERE PARAMETER LIKE '%LANGUAGE';
+
+
+
+
+
+
+
+
+
+
+
