@@ -1,0 +1,324 @@
+SELECT * FROM EMP
+
+
+SELECT
+EMPNO AS "EMPLOYEE_NO",
+ENAME AS "EMPLOYEE_NAME",
+JOB,
+MGR AS "MANAGER",
+HIREDATE,
+SAL AS "SALARY",
+COMM AS "COMMISSION",
+DEPTNO AS "DEPARTMENT_NO"
+FROM EMP
+ORDER BY DEPTNO DESC, ENAME ASC;
+
+
+SELECT ENAME, JOB, SAL, DEPTNO
+FROM EMP e WHERE DEPTNO = '10' + '10';
+
+SELECT ENAME, JOB, SAL, DEPTNO
+FROM EMP e WHERE DEPTNO = 20
+AND JOB = 'ANALYST';
+
+
+SELECT * FROM EMP WHERE SAL = 5000;
+SELECT * FROM EMP WHERE SAL != 5000;
+SELECT * FROM EMP WHERE SAL <> 5000;
+SELECT * FROM EMP WHERE SAL ^= 5000;
+SELECT * FROM EMP WHERE NOT SAL = 5000;
+SELECT * FROM EMP
+		 WHERE SAL = (SELECT MAX(SAL)
+		 FROM EMP);
+
+
+SELECT * FROM EMP WHERE SAL = 5000 AND SAL = 3000;
+SELECT * FROM EMP WHERE SAL = 5000 OR  SAL = 3000;
+SELECT * FROM EMP WHERE SAL IN (3000, 5000);
+SELECT * FROM EMP
+		 WHERE JOB = 'ANALYST'
+		 OR JOB = 'KING'
+		 OR JOB = 'CLERK';
+		
+SELECT * FROM EMP
+		 WHERE ENAME LIKE 'M%';
+SELECT * FROM EMP
+		 WHERE ENAME LIKE '_L%';		
+SELECT * FROM EMP
+		 WHERE ENAME LIKE '%AM%';		
+SELECT * FROM EMP
+		 WHERE ENAME LIKE '%S';		
+		
+		
+		
+SELECT * FROM EMP WHERE COMM = NULL;
+SELECT * FROM EMP WHERE COMM IS NULL;
+SELECT * FROM EMP WHERE MGR = NULL;
+SELECT * FROM EMP WHERE MGR IS NULL;
+
+
+SELECT EMPNO, ENAME, SAL, DEPTNO, JOB
+FROM EMP WHERE JOB ='CLERK'
+
+UNION 
+
+SELECT EMPNO, ENAME, SAL, DEPTNO, JOB
+FROM EMP WHERE JOB ='SALESMAN';
+
+
+
+SELECT EMPNO
+	 , ENAME
+	 , SAL
+	 , DEPTNO 
+	 FROM EMP
+	 WHERE DEPTNO = 10
+
+UNION 
+
+SELECT EMPNO
+	 , ENAME
+	 , SAL
+	 , DEPTNO 
+	 FROM EMP
+	 WHERE DEPTNO = 20;
+
+	
+SELECT EMPNO
+	 , ENAME
+	 , SAL
+	 , DEPTNO
+	 FROM EMP
+	 WHERE DEPTNO = 10
+UNION
+SELECT EMPNO
+	 , ENAME
+	 , SAL
+	 , DEPTNO
+	 FROM EMP
+	 WHERE DEPTNO = 10;
+	 
+SELECT EMPNO
+	 , ENAME
+	 , SAL
+	 , DEPTNO
+	 , JOB 
+	 FROM EMP
+INTERSECT
+SELECT EMPNO
+	 , ENAME
+	 , SAL
+	 , DEPTNO
+	 , JOB 
+	 FROM EMP
+	 WHERE DEPTNO = 10;
+	 
+	
+SELECT * FROM v$sqlfn_metadata; --오라클 내장함수 리스트
+SELECT func_id, argnum, datatype FROM v$sqlfn_metadata;
+
+
+SELECT ENAME
+	  ,UPPER(ENAME)
+	  ,LOWER(ENAME)
+	  ,INITCAP(ENAME)
+	  FROM EMP;
+	  
+	 
+	 
+SELECT ENAME
+	 , LENGTH(ENAME) 
+	 AS LNAME 
+	 FROM EMP
+	 WHERE LENGTH(ENAME)>=5;
+	 
+	
+SELECT JOB
+	  ,SUBSTR(JOB, 1, 2), SUBSTR(JOB, 3, 2), SUBSTR(JOB, 5)
+	  FROM EMP;
+	
+SELECT INSTR('HELLO, ORACLE!', 'L')AS INSTR_1
+	  ,INSTR('HELLO, ORACLE!', 'L', 5)AS INSTR_2
+	  ,INSTR('HELLO, ORACLE!', 'L', 2, 2)AS INSTR_3
+	  FROM DUAL;
+	
+	 
+SELECT '010-1234-5678' AS REPLACE_BEFORE
+	 				  ,REPLACE('010-1234-5678', '-', '')AS REPLACE_1
+	 				  ,REPLACE('010-1234-5678', '-')AS REPLACE_2
+	 				  FROM DUAL;
+	 
+SELECT 'Oracle', LPAD('Oracle', 10, '#')AS LPAD_1
+			   , RPAD('Oracle', 10, '*')AS RPAD_1 
+			   , LPAD('Oracle', 10)AS LPAD_2
+			   , RPAD('Oracle', 10)AS RPAD_2 
+			   FROM DUAL;
+	 
+			  
+SELECT '['||TRIM('__ORACLE__')||']' AS TRIM,
+'['||LTRIM('__ORACLE__')||']' AS LTRIM,
+'['||LTRIM('<_ORACLE_>')||']' AS LTRIM2,
+'['||LTRIM('__ORACLE__')||']' AS RTRIM,
+'['||LTRIM('__ORACLE__')||']' AS RTRIM2,
+			  
+SELECT '[' ||TRIM ('_ _Oracle_ _')||']' AS TRIM,
+'[' ||TRIM(LEADING FROM'_ _Oracle_ _')||']' AS TRIM_LEADING,
+'[' ||TRIM(TRAILING FROM'_ _Oracle_ _')||']' AS TRIM_TRAILING,
+'[' ||TRIM(BOTH FROM'_ _Oracle_ _')||']' AS TRIM_BOTH
+FROM DUAL;
+
+
+SELECT ABS(-100), ABS(100), ABS(0)
+FROM DUAL;
+
+SELECT SYSDATE AS NOW -- SYSDATE # 1
+, SYSDATE-1 AS YESTERDAY -- 날짜 - 숫자(일수)
+, SYSDATE+1 AS TOMORROW -- 날짜 + 숫자(일수)
+FROM DUAL;
+
+SELECT SYSDATE, ADD_MONTHS(SYSDATE, 3) -- 날짜 + 3개월
+FROM DUAL;
+SELECT EMPNO, ENAME, HIREDATE,
+ADD_MONTHS(HIREDATE, 12 * 20) AS WORK10YEAR FROM EMP;
+
+SELECT EMPNO, ENAME, HIREDATE, SYSDATE FROM EMP
+WHERE ADD_MONTHS(HIREDATE, 12 * 40) > SYSDATE;
+
+
+SELECT ENAME, HIREDATE, SYSDATE
+,MONTHS_BETWEEN(HIREDATE, SYSDATE)/ 12 AS Year1, MONTHS_BETWEEN(SYSDATE, HIREDATE)/12 AS Year2,
+TRUNC(MONTHS_BETWEEN(SYSDATE, HIREDATE)/12) AS Year3
+FROM EMP;
+
+
+SELECT SYSDATE,
+NEXT_DAY(SYSDATE, '월요일'), --월요일 = monday 입력
+LAST_DAY(SYSDATE)
+FROM DUAL;
+
+SELECT ENAME
+	  ,EXTRACT(YEAR FROM HIREDATE) AS y
+	  ,EXTRACT(month FROM HIREDATE) AS m
+	  ,EXTRACT(day FROM HIREDATE) AS d
+FROM emp;
+
+
+
+SELECT empno, ename, empno + '500' FROM EMP
+WHERE ename = 'SCOTT'
+
+SELECT 1300 -'1500', '1300' + 1500
+FROM dual;
+
+SELECT TO_number('1,500', '9,999') - 1300
+FROM dual;
+
+
+SELECT 'abcd' + empno, empno
+FROM EMP e WHERE ename = 'SCOTT'; --안되는 이유.
+
+
+
+SELECT SYSDATE
+,TO_CHAR(SYSDATE, 'MM') AS MM 
+,TO_CHAR(SYSDATE, 'MON') AS MON 
+,TO_CHAR(SYSDATE, 'MONTH') AS MONTH  
+,TO_CHAR(SYSDATE, 'DD') AS DD  
+,TO_CHAR(SYSDATE, 'DY') AS DY 
+,TO_CHAR(SYSDATE, 'DAY') AS DAY
+FROM DUAL;
+
+
+SELECT empno
+	 , ename
+	 , job
+	 , sal
+	 , decode(job
+	 		 ,'MANAGER', sal * 0.2,
+	 		 'SALESMAN', sal * 0.3,
+	 		 'ANALYST', sal * 0.05,
+	 		 sal * 0.1)
+	 		 AS bonus
+FROM EMP;
+
+
+SELECT empno
+	 , ename
+	 , sal
+	 , comm
+	 , sal + comm
+	 , NVL(comm, 0)
+	 , sal + NVL(comm, 0)
+FROM emp;
+
+
+
+SELECT empno
+	 , ename
+	 , comm
+	 , NVL2(comm, 'O', 'X')
+	 , NVL2(comm, sal * 12 + comm, sal * 12) AS annsal
+FROM emp;
+
+
+
+SELECT  *
+	FROM emp, dept
+	ORDER BY empno;
+
+SELECT *
+	FROM EMP e , dept d
+	WHERE ename = 'MILLER' ORDER BY EMPNO;
+
+SELECT *
+	FROM emp, DEPT 
+	WHERE emp.deptno = dept.DEPTNO
+	ORDER BY empno;
+
+SELECT *
+	FROM emp e 
+	JOIN dept d
+	on(e.deptno = d.deptno)
+	ORDER BY empno;
+	
+SELECT *
+	FROM emp e 
+	JOIN dept D
+	USING (deptno)
+	ORDER BY e.empno;
+	
+
+SELECT *
+	FROM emp e, dept d
+	WHERE e.deptno = d.DEPTNO 
+	ORDER BY empno;
+
+SELECT empno, ename, deptno, dname, loc
+	FROM emp e, dept d
+	WHERE e.deptno = d.deptno; --오류남
+	
+SELECT e.empno, e.ename, e.deptno, d.dname, d.loc
+	FROM emp e, dept d
+	WHERE e.deptno = d.deptno;	
+	
+	
+SELECT e.empno, e.ename, e.sal, d.deptno, d.dname, d.loc
+	FROM  emp e, dept d
+	WHERE e.deptno = d.DEPTNO 
+		AND sal <= 2000;
+
+SELECT e.empno, e.ename, e.sal, d.deptno, d.dname, d.loc
+	FROM emp e, dept d
+	WHERE e.deptno = d.DEPTNO
+		AND e.sal <= 2000;
+
+	
+SELECT ename, job, sal, grade, losal, hisal
+	FROM emp e, SALGRADE s 
+	WHERE e.sal detween s.losal AND s.HISAL;
+	
+	
+	
+	
+	
+	
