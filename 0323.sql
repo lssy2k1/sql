@@ -1,0 +1,224 @@
+SELECT *
+FROM V$VERSION
+;
+
+SELECT *
+FROM V$OPTION
+;
+
+SELECT *
+FROM v$database;
+
+
+SELECT *
+FROM v$instance
+;
+
+SELECT *
+FROM  v$session
+;
+
+SELECT *
+FROM v$parameter
+;
+
+SELECT * FROM all_tables;
+
+
+
+CREATE TABLE dept_tcl
+ AS ( SELECT * FROM dept )
+ ;
+
+SELECT *
+ FROM dept_tcl
+ ;
+
+INSERT INTO dept_tcl
+ VALUES (50, 'database', 'seoul')
+ ;
+
+UPDATE dept_tcl
+ SET loc = 'BUSAN'
+ WHERE deptno = 40
+ ;
+
+ROLLBACK;
+COMMIT;
+
+DELETE FROM dept_tcl			--DELETE 는 보통 행 자체를 날려서 FROM 이전에 안넣음.
+ WHERE dname = 'RESEARCH'
+ ;
+
+INSERT INTO dept_tcl 
+ VALUES(50, 'NETWORK', 'SEOUL')
+ ;
+
+UPDATE dept_tcl
+ SET loc = 'BUSAN' 
+ WHERE deptno = 20
+ ;
+
+DELETE FROM dept_tcl WHERE deptno = 40;
+
+SELECT * FROM dept_tcl;
+
+COMMIT;
+
+DELETE FROM DEPT_TCL
+ WHERE deptno = 50
+ ;
+
+--lock 테스트
+--동일한 계정으로 dbeaver 세션과 sqlplus를 열어서 데이터 수정하는 작업을 동시에 진행
+
+SELECT * FROM DEPT_TCL;
+
+UPDATE DEPT_TCL
+ SET LOC = 'SEOUL'
+ WHERE DEPTNO = 30;
+
+SELECT * FROM DEPT_TCL;
+
+COMMIT;
+
+--DBEAVER에서 UPDATE작업 후 COMMIT 전에 SQLPLUS에서 UPDATE작업을 진행하면 COMMIT이 진행되기 전까지는 LOCK이 걸려있음.
+
+
+
+--TUNING 기초 : 자동차 튜닝과 같이
+--DB처리 속도(우선)와 안정성 제고 목적이 대부분.
+
+SELECT *
+ FROM EMP
+ WHERE SUBSTR(EMPNO, 1,2) = 75 --암묵적 형변환
+ 	AND LENGTH(EMPNO) = 4 --불필요한 비교
+ 	;
+
+SELECT *
+ FROM EMP
+ WHERE EMPNO BETWEEN 7500 AND 7600;
+
+
+SELECT * 
+ FROM EMP
+ WHERE ENAME || ' ' || JOB = 'WARD SALESMAN';
+
+SELECT *
+ FROM EMP
+ WHERE ENAME = 'WARD'
+ AND JOB = 'SALESMAN'
+ ;
+
+--튜닝 전 후 비교
+SELECT DISTINCT E.EMPNO , E.ENAME , M.DEPTNO
+FROM EMP e JOIN DEPT M 
+			ON (E.DEPTNO = M.DEPTNO)
+			;
+
+SELECT E.EMPNO , E.ENAME , M.DEPTNO
+FROM EMP e JOIN DEPT M 
+			ON (E.DEPTNO = M.DEPTNO)
+			;
+
+
+		
+SELECT *
+ FROM EMP
+ WHERE DEPTNO = '10'
+UNION --상호독립적 테이블에 UNION을 이용하여 중복제거비용 발생, 암묵적 형변환 '10' -> 10 발생.
+SELECT *
+ FROM EMP
+ WHERE DEPTNO = '20'
+ ;
+
+SELECT *
+ FROM EMP
+ WHERE DEPTNO = 10
+UNION ALL
+SELECT *
+ FROM EMP
+ WHERE DEPTNO = 20
+ ;
+
+
+
+SELECT ENAME, EMPNO, SUM(SAL) --집계함수가 목적임
+ FROM EMP
+ GROUP BY ENAME, EMPNO
+ ;
+--EMPNO에 인덱스가 설정되어있으므로 우선순위로 GROUP BY하는 게 중요.
+SELECT ENAME, EMPNO, SUM(SAL) --집계함수가 목적임
+ FROM EMP
+ GROUP BY EMPNO, ENAME
+ ;
+
+
+SELECT EMPNO, ENAME
+FROM EMP 
+WHERE TO_CHAR(HIREDATE, 'YYYYDDMM') LIKE '1981%'
+	AND EMPNO > 7700
+	;
+--LIKE는 후순위로 써야한다... 부등호값을 먼저 써보기
+SELECT EMPNO, ENAME
+FROM EMP
+WHERE EXTRACT (YEAR FROM HIREDATE) = 1981 
+	AND EMPNO > 7700
+	;
+
+
+SELECT *
+ FROM USER_INDEXES;
+
+DROP INDEX IDX_EMP_JOB;
+
+CREATE INDEX IDX_EMP_JOB
+	ON EMP(JOB)
+	;
+
+SELECT JOB, SUM(SAL) AS SUM_OF_SAL
+ FROM EMP
+ GROUP BY JOB
+ ORDER BY SUM_OF_SAL DESC
+ ;
+ 
+
+SELECT *
+FROM EMPLOYEES;
+
+SELECT E.EMPLOYEE_ID 
+	  ,E.JOB_ID 
+	  ,E.MANAGER_ID 
+	  ,E.DEPARTMENT_ID 
+	  ,D.LOCATION_ID 
+	  ,L.COUNTRY_ID 
+	  ,E.FIRST_NAME 
+	  ,E.LAST_NAME 
+	  ,E.SALARY 
+	  ,E.COMMISSION_PCT 
+	  ,D.DEPARTMENT_ID 
+	  ,J.JOB_TITLE 
+	  ,L.CITY 
+	  ,L.STATE_PROVINCE 
+	  ,C.COUNTRY_NAME
+	  ,R.REGION_NAME 
+FROM EMPLOYEES e 
+	,DEPARTMENTS d 
+	,JOBS j 
+	,LOCATIONS l 
+	,COUNTRIES c 
+	,REGIONS r 
+WHERE E.DEPARTMENT_ID = D.DEPARTMENT_ID 
+ AND D.LOCATION_ID = L.LOCATION_ID 
+ AND L.COUNTRY_ID = C.COUNTRY_ID 
+ AND C.REGION_ID = R.REGION_ID 
+ AND J.JOB_ID = E.JOB_ID ;
+
+
+
+
+
+
+
+
+
